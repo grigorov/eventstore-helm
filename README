@@ -1,0 +1,14 @@
+EventStore helm chart for kubernetes.
+
+For azure:
+Create exist persistent volume:
+kubectl apply -f pvc-exist.yaml
+
+Install via helm:
+helm upgrade --install eventstore eventstore --set ingress.enabled=true --set ingress.hosts[0]=eventstore.<domainname> --set persistence.enabled=true 
+
+access to Eventstore Web UI: http://eventstore.<domainname> with default login and password (admin/changeit)
+
+My default:
+persistence = false
+ingress = false
