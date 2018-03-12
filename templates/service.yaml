@@ -13,7 +13,7 @@ spec:
     - name: http
       port: {{ default "2113" .Values.service.HTTPInterfacePort }}
       targetPort: http
-      protocol: HTTP
+      protocol: TCP
     - name: tcp
       port: {{ default "1113" .Values.service.TCPInterfacePort }}
       targetPort: tcp
