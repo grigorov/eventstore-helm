@@ -44,14 +44,14 @@ spec:
               path: /stats
               port: {{ .Values.service.HTTPInterfacePort }}
             initialDelaySeconds: 5
-            timeoutSeconds: 1
+            timeoutSeconds: 5
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /stats
               port: {{ .Values.service.HTTPInterfacePort }}
             initialDelaySeconds: 5
-            timeoutSeconds: 1
+            timeoutSeconds: 5
             periodSeconds: 15
           resources:
 {{ toYaml .Values.resources | indent 12 }}
