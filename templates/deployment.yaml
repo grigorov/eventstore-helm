@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "eventstore.fullname" . }}
+  labels:
+    app: {{ template "eventstore.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "eventstore.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+{{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+          - name: http
+            containerPort: {{ default "2113" .Values.service.HTTPInterfacePort }}
+          - name: tcp
+            containerPort: {{ default "1113" .Values.service.TCPInterfacePort }} 
+          volumeMounts:
+          - name: data
+            mountPath: /var/lib/eventstore
+          livenessProbe:
+            httpGet:
+              path: /stats
+              port: {{ .Values.service.HTTPInterfacePort }}
+          readinessProbe:
+            httpGet:
+              path: /stats
+              port: {{ .Values.service.HTTPInterfacePort }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+      volumes:
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default (include "eventstore.fullname" .) }}
+      {{- else }}
+        emptyDir: {}
+      {{- end -}} 
