@@ -4,18 +4,23 @@
 replicaCount: 1
 image:
   repository: eventstore/eventstore
-  tag: latest
+  tag: release-4.1.1-hotfix1
   pullPolicy: IfNotPresent
 service:
   name: eventstore
   type: ClusterIP
   HTTPInterfacePort: 2113
   TCPInterfacePort: 1113
+
+cluster:
+  enabled: false
+  replicaCount: 3
+
 ingress:
   enabled: false
   # Used to create an Ingress record.
   hosts:
-    - eventstore-red.k8s-test.digital.bank
+    - eventstore.test.example.com
   annotations:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -51,3 +56,7 @@ persistence:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+envs:
+  EVENTSTORE_START_STANDARD_PROJECTIONS: True
+  EVENTSTORE_RUN_PROJECTIONS: "All"
+  EVENTSTORE_MEM_DB: True

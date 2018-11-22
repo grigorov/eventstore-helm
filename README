@@ -5,10 +5,23 @@ Create exist persistent volume:
 kubectl apply -f pvc-exist.yaml
 
 Install via helm:
-helm upgrade --install eventstore eventstore --set ingress.enabled=true --set ingress.hosts[0]=eventstore.<domainname> --set persistence.enabled=true 
+helm upgrade --install eventstore eventstore --set ingress.enabled=true --set ingress.hosts[0]=eventstore.<domainname> --set persistence.enabled=true --set fullnameOverride=eventstore
 
 access to Eventstore Web UI: http://eventstore.<domainname> with default login and password (admin/changeit)
 
 My default:
 persistence = false
 ingress = false
+cluster = false
+
+if you need enable ingress:
+```
+helm upgrade -i eventstore eventstore --set fullnameOverride=eventstore --set image.tag=release-4.1.1-hotfix1 --set ingress.enabled=true --set ingress.hosts[0]=eventstore.test.<domainname> --namespace=test
+```
+
+if you need cluster eventstore with UI:
+```
+helm upgrade -i eventstore eventstore --set fullnameOverride=eventstore --set cluster.enabled=true --set image.tag=release-4.1.1-hotfix1 --set ingress.enabled=true --set ingress.hosts[0]=eventstore.test.<domainname> --namespace=test
+```
+
+Cluster Status: http://eventstore.test.<domainname>/web/index.html#/clusterstatus
